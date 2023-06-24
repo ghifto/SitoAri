@@ -20,6 +20,26 @@ li
 {
     list-style: none;
 }
+.btn
+{
+    position: relative;
+    align-items: center;
+    text-decoration: none;
+    padding: 20px 30px;
+    color: #3bd93b;
+    border: 3px solid #3bd93b;
+    border-radius: 50px;
+    letter-spacing: 3px;
+    font-weight: bold;
+    font-size: 30px;
+    top : 60px;
+    left: 50px;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: color 0.3s,
+    box-shadow 0.3s,
+    border-color 0.3s;
+}
 .language-img
 {
     width: 100px;
@@ -28,7 +48,7 @@ li
 }
 .drop-down-body
 {
-    position: relative;
+    position: ab;
 }
 .drop-down-btn
 {
@@ -81,4 +101,13 @@ li
 .language-item:hover
 {
     background-color: #5fcbff;
+}
+
+.btn:hover
+{
+    box-shadow: 
+    0 0 10px rgb(0, 255, 242),
+    0 0 40px rgba(0, 255, 255, 0.7);
+    border-color: #00ffff;
+    color: #00ffff;
 }
