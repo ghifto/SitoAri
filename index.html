@@ -37,7 +37,7 @@
 
                     <li class="language-item" data-lang="du">
                         <img src="imgs/du.png" alt="du" class="language-img">
-                        <h3 class="language-title">Du</h3>
+                        <h3 class="language-title">du</h3>
                     </li>
                     
                     <li class="language-item" data-lang="uk">
@@ -47,5 +47,22 @@
                 </ul>
             </div>
         </main>
+        <script>
+            var langItems = document.getElementsByClassName("language-item");
+    
+            var btnImg = document.getElementById("btn-img");
+            var btnTitle = document.getElementById("btn-title");
+    
+            for(var i=0; i<langItems.length; i++)
+            {
+                var langItem = langItems[i];
+                langItem.onclick = changeLanguage;
+            }
+            function changeLanguage(e)
+            {
+                btnImg.src = "imgs/"+this.dataset.lang+".png";
+                btnTitle.innerText = this.dataset.lang;
+            }
+        </script>
     </body>
 </html>
