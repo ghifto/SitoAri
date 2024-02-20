@@ -1,73 +1,64 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Home page</title>
-        <style>
-    
-            .centrato {text-align: center;}
-            .img-centrata {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-            }
-        </style>
-        <link rel="stylesheet" href="style.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <main class="display">
-            <div>
-                <h1 class="centrato">Scegli la lingua</h1>
-    
-            </div>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Phrase Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: black; /* Set the background color to black */
+            color: white; /* Set the text color to white */
+            
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 8px; /* Set border-radius for rounded corners */
+            background-color: #800080; /* Set the background color to purple */
+            color: white; /* Set the text color to white */
+        }
+    </style>
+</head>
+<body>
 
-            <div class="drop-down-body">
-                <a href="#" class="drop-down-btn">
-                    <img src="imgs/it.png" alt="it" id="btn-img" class="language-imng">
-                    <h3 id="btn-title" class="language-title">
-                        it
-                    </h3>
-                </a>
+<h1>Random Phrase Generator</h1>
 
-                <ul class="language-menu">
-                    <li class="language-item" data-lang="it">
-                        <img src="imgs/it.png" alt="it" class="language-img">
-                        <h3 class="language-title">it</h3>
-                    </li>
+<p id="phraseDisplay"></p>
 
-                    <li class="language-item" data-lang="du">
-                        <img src="imgs/du.png" alt="du" class="language-img">
-                        <h3 class="language-title">du</h3>
-                    </li>
-                    
-                    <li class="language-item" data-lang="uk">
-                        <img src="imgs/uk.png" alt="uk" class="language-img">
-                        <h3 class="language-title">uk</h3>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <a href="#" class="btn">
-                    Conferma
-                </a>
-            </div>
-        </main>
-        <script>
-            var langItems = document.getElementsByClassName("language-item");
-    
-            var btnImg = document.getElementById("btn-img");
-            var btnTitle = document.getElementById("btn-title");
-    
-            for(var i=0; i<langItems.length; i++)
-            {
-                var langItem = langItems[i];
-                langItem.onclick = changeLanguage;
-            }
-            function changeLanguage(e)
-            {
-                btnImg.src = "imgs/"+this.dataset.lang+".png";
-                btnTitle.innerText = this.dataset.lang;
-            }
-        </script>
-    </body>
+<button onclick="generateRandomPhrase()">Generate Random Phrase</button>
+
+<script>
+    let clickCount = 0;
+
+    // List of phrases
+    const phrases = [
+        "Prendero sempre un proiettile per te, anche se sei te a spararlo.",
+        "Non ti lascerò mai, ci ho messo così tanto a prenderti che ora sei bloccata con me.",
+        "Ti ho sempre amato, anche quando non capivo di farlo.",
+        "Quando son con te ritorno il me bambino, che si emozionava per tutto.",
+        "Parlare con te mi rilassa, mi sento in pace con me stesso.",
+        "Sei il primo pensiero che ho la mattina e l'ultimo che ho la sera.",
+        "Che tu mi creda o meno, io continuero ad amarti e starti accanto. Anche se tu cercerai di allontanarmi."
+    ];
+
+    function generateRandomPhrase() {
+        if(clickCount > 9) { document.getElementById('phraseDisplay').textContent = "Ho fatto questo sito in 40 minuti che ti aspetti. Prometto che ne aggiungerò altre frasi"; }
+        else {
+            // Get a random index from the phrases array
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            clickCount++;
+            // Display the random phrase
+            document.getElementById('phraseDisplay').textContent = phrases[randomIndex];
+        }
+        
+    }
+</script>
+
+</body>
 </html>
