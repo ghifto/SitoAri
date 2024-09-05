@@ -15,7 +15,21 @@
     />
   </head>
   <body>
+    <script>
 
+        const data = "prova";
+        
+        options = { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }
+        
+        fetch('/api', options);
+    
+    </script>
     <!-- feed starts -->
     <div class="feed">
       <div class="feed__header">
