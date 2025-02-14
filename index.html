@@ -34,11 +34,10 @@
         let currentGroups = [];
         let selectedFighters = new Set();
 
-        fetch("/Nomi.txt")
-            .then(response => response.text())
-            .then(text => {
-                names = text.split("\n").map(name => name.trim()).filter(Boolean);
-            });
+        fetch("Nomi.json")
+    .then(response => response.json())
+    .then(data => { names = data.names; });
+
 
         function updateGroupNameInputs() {
             const groupCount = parseInt(document.getElementById("groupCount").value);
