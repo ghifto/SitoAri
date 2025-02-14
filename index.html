@@ -34,7 +34,7 @@
         let currentGroups = [];
         let selectedFighters = new Set();
 
-        fetch("/Data/Nomi.txt")
+        fetch("/Nomi.txt")
             .then(response => response.text())
             .then(text => {
                 names = text.split("\n").map(name => name.trim()).filter(Boolean);
