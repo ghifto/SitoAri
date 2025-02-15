@@ -28,22 +28,27 @@
     <select id="groupSelect2"></select>
     <button onclick="generateFight()">Start a Fight!</button>
     <div id="fightResult"></div>
+    <h2>Scoreboard</h2>
+    <div id="scoreboard"></div>
     
     <script>
         let names = [];
         let currentGroups = [];
         let selectedFighters = new Set();
+        let groupScores = {};
+        let currentFight = [];
 
-        fetch("Nomi.json")
-    .then(response => response.json())
-    .then(data => { names = data.names; });
-
+        fetch("names.json")
+            .then(response => response.json())
+            .then(data => {
+                names = data.names;
+            })
+            .catch(error => console.error("Error loading names.json:", error));
 
         function updateGroupNameInputs() {
             const groupCount = parseInt(document.getElementById("groupCount").value);
             const groupNamesContainer = document.getElementById("groupNames");
             groupNamesContainer.innerHTML = "";
-            
             for (let i = 0; i < groupCount; i++) {
                 const input = document.createElement("input");
                 input.type = "text";
@@ -57,7 +62,7 @@
         function splitIntoGroups() {
             const groupCount = parseInt(document.getElementById("groupCount").value);
             if (names.length === 0) {
-                alert("No names loaded. Please check your names.txt file.");
+                alert("No names loaded. Please check your names.json file.");
                 return;
             }
             
@@ -67,6 +72,7 @@
                 currentGroups[index % groupCount].push(name);
             });
             selectedFighters.clear();
+            groupScores = {};
             
             const groupsContainer = document.getElementById("groups");
             groupsContainer.innerHTML = "";
@@ -80,6 +86,8 @@
                 groupDiv.className = "group";
                 const groupNameInput = document.getElementById(`groupName${i}`);
                 const groupName = groupNameInput && groupNameInput.value.trim() ? groupNameInput.value.trim() : `Group ${i + 1}`;
+                
+                groupScores[groupName] = 0;
                 
                 let groupList = "<ul>";
                 group.forEach(member => {
@@ -99,31 +107,50 @@
                 groupSelect1.appendChild(option1);
                 groupSelect2.appendChild(option2);
             });
+            updateScoreboard();
         }
 
         function generateFight() {
-            const groupIndex1 = parseInt(document.getElementById("groupSelect1").value);
-            const groupIndex2 = parseInt(document.getElementById("groupSelect2").value);
-            if (groupIndex1 === groupIndex2) {
-                alert("Select two different groups!");
+            const group1Index = parseInt(document.getElementById("groupSelect1").value);
+            const group2Index = parseInt(document.getElementById("groupSelect2").value);
+            
+            if (group1Index === group2Index) {
+                alert("Select two different groups to fight.");
                 return;
             }
             
-            let availableFighters1 = currentGroups[groupIndex1].filter(name => !selectedFighters.has(name));
-            let availableFighters2 = currentGroups[groupIndex2].filter(name => !selectedFighters.has(name));
+            const group1 = currentGroups[group1Index].filter(member => !selectedFighters.has(member));
+            const group2 = currentGroups[group2Index].filter(member => !selectedFighters.has(member));
             
-            if (availableFighters1.length === 0 || availableFighters2.length === 0) {
-                alert("Not enough available fighters in selected groups!");
+            if (group1.length === 0 || group2.length === 0) {
+                alert("One or both groups have no available fighters left.");
                 return;
             }
             
-            let fighter1 = availableFighters1[Math.floor(Math.random() * availableFighters1.length)];
-            let fighter2 = availableFighters2[Math.floor(Math.random() * availableFighters2.length)];
+            const fighter1 = group1[Math.floor(Math.random() * group1.length)];
+            const fighter2 = group2[Math.floor(Math.random() * group2.length)];
+            
             selectedFighters.add(fighter1);
             selectedFighters.add(fighter2);
-            
-            const fightResult = document.getElementById("fightResult");
-            fightResult.innerText = `${fighter1} VS ${fighter2} - Who will win?`;
+            currentFight = [fighter1, fighter2];
+            document.getElementById("fightResult").innerHTML = `Fight: ${fighter1} vs ${fighter2} <br>
+            <button onclick="declareWinner('${fighter1}', ${group1Index})">${fighter1} Wins</button>
+            <button onclick="declareWinner('${fighter2}', ${group2Index})">${fighter2} Wins</button>`;
+        }
+
+        function declareWinner(winner, groupIndex) {
+            const groupName = document.getElementById(`groupName${groupIndex}`).value || `Group ${groupIndex + 1}`;
+            groupScores[groupName]++;
+            updateScoreboard();
+            document.getElementById("fightResult").innerHTML = `${winner} wins!`;
+        }
+
+        function updateScoreboard() {
+            const scoreboard = document.getElementById("scoreboard");
+            scoreboard.innerHTML = "<h3>Scores</h3>";
+            for (let group in groupScores) {
+                scoreboard.innerHTML += `<p>${group}: ${groupScores[group]}</p>`;
+            }
         }
     </script>
 </body>
