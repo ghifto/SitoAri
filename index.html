@@ -5,13 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Divizioni in gruppi</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-        .group { border: 1px solid #ccc; padding: 10px; margin-top: 10px; padding: 10px; }
-        #fightResult { font-size: 1.2em; font-weight: bold; margin-top: 20px; }
-    </style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: auto; 
+            padding: 20px; 
+            background-color: black;  /* Sfondo nero */
+            color: white;  /* Testo bianco */
+        }
+        .group { 
+            border: 1px solid white; /* Bordo bianco */
+            padding: 10px; 
+            margin-top: 10px;
+        }
+        #fightResult { 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            margin-top: 20px;
+        }
+        button {
+            background-color: rgb(58, 58, 58); /* Bottone grigio */
+            color: white; /* Testo bianco */
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkgray; /* Cambio colore al passaggio */
+        }
+        /* Stile della modale */
+        .modal {
+            display: none; /* Inizialmente nascosta */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white; color: black;
+            margin: 15% auto; padding: 20px;
+            width: 50%; text-align: center;
+            border-radius: 10px;
+        }
+    </style>    
 </head>
 <body>
     <h1>Divizioni in gruppi</h1>
+    
+    <h2>Seleziona i presenti</h2>
+    <button onclick="openSelectionModal()">Seleziona i presenti</button>
+
+    <!-- Messagebox (modale) -->
+    <div id="selectionModal" class="modal">
+        <div class="modal-content">
+            <h2>Seleziona i presenti</h2>
+            <div id="nameSelection"></div>
+            <button onclick="updateSelectedNames()">Conferma</button>
+        </div>
+    </div>
+
     <label for="groupCount">Quanti gruppi:</label>
     <select id="groupCount">
         <option value="2">2</option>
@@ -35,27 +86,66 @@
     <div id="scoreboard"></div>
     
     <script>
-        let names = [];
         let currentGroups = [];
         let selectedFighters = new Set();
         let groupScores = {};
         let currentFight = [];
 
+        let allNames = []; // Lista completa dei nomi
+        let selectedNames = []; // Lista dei nomi selezionati
+
         fetch("names.json")
             .then(response => response.json())
             .then(data => {
-                names = data.names;
+                allNames = data.names;
+                displayNameSelection(); // Mostra la lista di selezione
             })
-            .catch(error => console.error("Errore nel collegare names.json:", error));
+            .catch(error => console.error("Error loading names.json:", error));
+
+        function openSelectionModal() {
+            document.getElementById("selectionModal").style.display = "block";
+        }
+
+        function displayNameSelection() {
+            const selectionContainer = document.getElementById("nameSelection");
+            selectionContainer.innerHTML = ""; // Pulisce la lista
+
+            allNames.forEach(name => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = name;
+                checkbox.checked = true; // Di default tutti selezionati
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(name));
+                selectionContainer.appendChild(label);
+                selectionContainer.appendChild(document.createElement("br"));
+            });
+        }
+
+        function updateSelectedNames() {
+            selectedNames = []; // Svuota la selezione
+
+            const checkboxes = document.querySelectorAll("#nameSelection input[type='checkbox']");
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedNames.push(checkbox.value);
+                }
+            });
+
+            document.getElementById("selectionModal").style.display = "none"; // Chiude la modale
+            alert("Selection updated! Now create the groups.");
+        }
 
         function splitIntoGroups() {
             const groupCount = parseInt(document.getElementById("groupCount").value);
-            if (names.length === 0) {
+            if (selectedNames.length === 0) {
                 alert("File non caricato, controlla che sia inserito bene nel server");
                 return;
             }
             
-            const shuffled = [...names].sort(() => Math.random() - 0.5);
+            const shuffled = [...selectedNames].sort(() => Math.random() - 0.5);
             currentGroups = Array.from({ length: groupCount }, () => []);
             shuffled.forEach((name, index) => {
                 currentGroups[index % groupCount].push(name);
