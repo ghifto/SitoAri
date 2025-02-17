@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Splitter</title>
+    <title>Divizioni in gruppi</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
         .group { border: 1px solid #ccc; padding: 10px; margin-top: 10px; padding: 10px; }
@@ -11,27 +11,27 @@
     </style>
 </head>
 <body>
-    <h1>Group Splitter</h1>
-    <label for="groupCount">Number of Groups:</label>
+    <h1>Divizioni in gruppi</h1>
+    <label for="groupCount">Quanti gruppi:</label>
     <select id="groupCount">
         <option value="2">2</option>
         <option value="4">4</option>
     </select>
-    <button onclick="splitIntoGroups()">Split into Groups</button>
+    <button onclick="splitIntoGroups()">Dividi i gruppi</button>
     <div id="groups"></div>
     
-    <h2>Rename Groups</h2>
+    <h2>Cambia nome</h2>
     <div id="groupNames"></div>
-    <button onclick="renameGroups()">Rename Groups</button>
+    <button onclick="renameGroups()">Cambia nome</button>
     
-    <h2>Select Groups for Fight</h2>
-    <label for="groupSelect1">Group 1:</label>
+    <h2>Seleziona gruppo per combattere</h2>
+    <label for="groupSelect1">Gruppo 1:</label>
     <select id="groupSelect1"></select>
-    <label for="groupSelect2">Group 2:</label>
+    <label for="groupSelect2">Gruppo 2:</label>
     <select id="groupSelect2"></select>
-    <button onclick="generateFight()">Start a Fight!</button>
+    <button onclick="generateFight()">Inizia il combattimento</button>
     <div id="fightResult"></div>
-    <h2>Scoreboard</h2>
+    <h2>Risultati</h2>
     <div id="scoreboard"></div>
     
     <script>
@@ -46,12 +46,12 @@
             .then(data => {
                 names = data.names;
             })
-            .catch(error => console.error("Error loading names.json:", error));
+            .catch(error => console.error("Errore nel collegare names.json:", error));
 
         function splitIntoGroups() {
             const groupCount = parseInt(document.getElementById("groupCount").value);
             if (names.length === 0) {
-                alert("No names loaded. Please check your names.json file.");
+                alert("File non caricato, controlla che sia inserito bene nel server");
                 return;
             }
             
@@ -71,7 +71,9 @@
             const groupSelect2 = document.getElementById("groupSelect2");
             groupSelect1.innerHTML = "";
             groupSelect2.innerHTML = "";
-            
+
+            console.log(groupsContainer);
+
             currentGroups.forEach((group, i) => {
                 const groupDiv = document.createElement("div");
                 groupDiv.className = "group";
@@ -161,7 +163,6 @@
                 const fighter2 = group2Buff[Math.floor(Math.random())];
                 const fighter1 = group1[Math.floor(Math.random() * group2.length)];
                 cousefight(fighter1, fighter2, group1Index, group2Index); 
-                selectedFighters.add(fighter1);
             }
             else if(group2.length > 0 && group1.length === 0) {
                 console.log("manca grup 1");
@@ -170,7 +171,6 @@
                 const fighter2 = group2[Math.floor(Math.random() * group1.length)];
                 const fighter1 = group1Buff[Math.floor(Math.random())];
                 cousefight(fighter1, fighter2, group1Index, group2Index); 
-                selectedFighters.add(fighter1);
             }
             else if(group1.length > 0 && group2.length > 0){
                 console.log("ci son tutti");
@@ -192,26 +192,44 @@
         function cousefight(fighter1, fighter2, group1Index, group2Index) {
             selectedFighters.add(fighter1);
             selectedFighters.add(fighter2);
+            updateFighterStatus(); // Aggiorna la visualizzazione
+            
             currentFight = [fighter1, fighter2];
             document.getElementById("fightResult").innerHTML = `Fight: ${fighter1} vs ${fighter2} <br>
-            <button onclick="declareWinner('${fighter1}', ${group1Index})">${fighter1} Wins</button>
-            <button onclick="declareWinner('${fighter2}', ${group2Index})">${fighter2} Wins</button>`;
+            <button onclick="declareWinner('${fighter1}', ${group1Index})">${fighter1} Vince</button>
+            <button onclick="declareWinner('${fighter2}', ${group2Index})">${fighter2} Vince</button>`;
         }
 
         function declareWinner(winner, groupIndex) {
             const groupName = document.getElementById(`group${groupIndex}`).querySelector("h2").textContent;
             groupScores[groupName] = (groupScores[groupName] || 0) + 1;
             updateScoreboard();
-            document.getElementById("fightResult").innerHTML = `${winner} wins!`;
+            document.getElementById("fightResult").innerHTML = `${winner} Vince!`;
         }
 
         function updateScoreboard() {
             const scoreboard = document.getElementById("scoreboard");
-            scoreboard.innerHTML = "<h3>Scores</h3>";
+            scoreboard.innerHTML = "<h3>Risultato</h3>";
             for (let group in groupScores) {
                 scoreboard.innerHTML += `<p>${group}: ${groupScores[group]}</p>`;
             }
         }
+
+        function updateFighterStatus() {
+            currentGroups.forEach((group, i) => {
+            const groupDiv = document.getElementById(`group${i}`);
+            const listItems = groupDiv.getElementsByTagName("li");
+
+            for (let item of listItems) {
+             if (selectedFighters.has(item.textContent)) {
+                    item.style.textDecoration = "line-through"; // Barra il nome se è stato selezionato
+                } else {
+                    item.style.textDecoration = "none"; // Ripristina se non è stato scelto
+                }
+            }
+        });
+}
+
     </script>
 </body>
 </html>
